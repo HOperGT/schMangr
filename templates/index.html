@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Классы</title>
+    <style>
+      body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            margin: 20px;
+            display: flex;
+            flex-direction: column; /* Элементы сверху вниз */
+            align-items: center; /* Выравнивание по центру по горизонтали */
+        }
+
+        .main-content {
+            width: 80%; /* Ширина контента */
+            max-width: 800px; /* Максимальная ширина */
+            margin: 20px auto; /* Автоматические отступы */
+        }
+
+
+        
+
+        .add-class-button{
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .add-class-button {
+            background-color: #4CAF50;
+        }
+
+        /* ... (предыдущие стили) ... */
+
+        #delete-class-form {
+            display: flex; /* Используем flexbox */
+            align-items: center; /* Выравниваем элементы по вертикали */
+            margin-top: 20px;
+        }
+
+        #delete-class-form input[type="text"] {
+            flex: 1; /* input занимает доступное пространство */
+            padding: 8px;
+            margin-right: 10px; /* Отступ между input и кнопкой */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #delete-class-form button {
+            padding: 8px 15px;
+            background-color: #f44336; /* Красный цвет */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        
+        .classes-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Выравнивание списка классов по центру */
+        }
+
+        .class-list {
+            display: flex;
+            flex-wrap: wrap; /* Разрешаем перенос на новую строку */
+            justify-content: center; /* Выравнивание блоков по центру */
+        }
+
+        
+
+
+
+        .class-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 300px; /* Фиксированная ширина */
+            transition: transform 0.3s ease-in-out; /* Анимация трансформации */
+            animation: classAppear 0.5s ease-in-out forwards; /* Анимация появления */
+        }
+
+        .class-box:hover {
+            transform: scale(1.05); /* Увеличение при наведении */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Сильнее тень */
+        }
+
+        @keyframes classAppear {
+            from { opacity: 0; transform: translateY(20px); } /* Начальное положение */
+            to { opacity: 1; transform: translateY(0); } /* Конечное положение */
+        }
+
+       
+
+
+        
+    </style>
+</head>
+<body>
+    <h1>School №60</h1>
+    <div class="main-content">  <!-- Новый контейнер -->
+        <div class="buttons-container">
+            <h1>Регистрация классов</h1>
+            <a href="/register" class="add-class-button">Добавить класс</a>
+            <h2>Удаление класса:</h2>
+            <form method="POST" action="{{ url_for('delete_class_by_name') }}" id="delete-class-form">
+
+                <input type="text" name="class_name" placeholder="Введите название класса" required>
+        
+                <button type="submit">Удалить класс</button>
+        
+            </form>
+
+        <div class="classes-container">
+            <h2>Список классов:</h2>
+            <div class="class-list">
+                {% for class in classes %}
+                    <div class="class-box">
+                        <h3>{{ class.class_name }}</h3>
+                        <a href="{{ url_for('add_schedule', id=class.id) }}">Добавить расписание</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

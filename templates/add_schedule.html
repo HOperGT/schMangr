@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавить расписание</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif; /* Используйте современный шрифт */
+            background-color: #f4f4f4; /* Светло-серый фон */
+            color: #333; /* Темно-серый текст */
+            line-height: 1.6; /* Улучшенная читаемость */
+            margin: 20px;
+        }
+
+        h1, h3 {
+            color: #222; /* Темнее заголовок */
+            font-weight: 500; /* Средний вес шрифта */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd; /* Тонкая серая граница */
+        }
+
+        th {
+            background-color: #eee; /* Светло-серый фон для заголовков таблицы */
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px; /* Скругленные углы */
+            box-sizing: border-box; /* Включает padding и border в ширину */
+        }
+
+        button {
+            background-color: #4CAF50; /* Зеленый цвет кнопки */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049; /* Темнее зеленый при наведении */
+        }
+
+        .day-controls {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .schedule-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .schedule-row {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .time-column {
+            width: 100px;
+            padding: 10px;
+            text-align: center;
+            border-right: 1px solid #ddd;
+        }
+
+
+        /*  Добавьте другие стили по необходимости */
+
+        a {
+            color: #333; /* Цвет ссылок */
+            text-decoration: none; /* Уберите подчеркивание */
+        }
+        a:hover {       
+            text-decoration: underline; /* Подчеркивание при наведении */
+        }
+
+        label {     
+            display: block; /* Каждый label на новой строке */
+            margin-bottom: 5px;
+        }
+
+
+        .schedule-table {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .schedule-row {
+            display: table-row;
+        }
+        .schedule-row > .time-column {
+            width: 150px;
+            font-weight: bold;
+            padding: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        .schedule-row > .modifiable-lesson {
+            display: table-cell;
+            width: 300px;
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+        .schedule-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .time-column {
+            width: 150px;
+        }
+
+        .modifiable-lesson {
+            width: 300px;
+            margin: 0 10px;
+        }
+
+        .classroom-select {
+            width: 150px;
+        }
+
+    </style>
+
+<body>
+    <h1>Добавить расписание для {{ class_schedule.class_name }}</h1>
+
+    <div class="day-controls">
+        <select id="template-day">
+            <option value="monday">Понедельник</option>
+            <option value="tuesday">Вторник</option>
+            <option value="wednesday">Среда</option>
+            <option value="thursday">Четверг</option>
+            <option value="friday">Пятница</option>
+            <option value="saturday">Суббота</option>
+            <option value="sunday">Воскресенье</option>
+        </select>
+        <button type="button" onclick="copySchedule()">Копировать расписание</button>
+        <span id="current-date" style="margin-left: 20px;"></span>
+    </div>
+
+    <form method="POST" id="schedule-form">
+        <input type="hidden" name="class_id" value="{{ class_schedule.id }}">
+        <table>
+            <tr>
+                <th>Урок</th>
+                <th>Пн</th>
+                <th>Вт</th>
+                <th>Ср</th>
+                <th>Чт</th>
+                <th>Пт</th>
+                <th>Сб</th>
+                <th>Вс</th>
+            </tr>
+            {% for i in range(1, 9) %}
+            <tr>
+                <td>{{ i }}</td> 
+                {% for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] %}
+                <td>
+                <input type="text" name="{{ day }}"                        
+                       value="{{ class_schedule[day].split(',')[i-1] if i-1 < class_schedule[day].split(',')|length else '' }}" 
+                       placeholder="{{ i }} урок" 
+                       onchange="saveSchedule()">
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+        
+        <div>
+            <h3>Изменяемое расписание</h3>
+
+            <label>
+                <input type="checkbox" id="shortened-day-checkbox" onclick="updateScheduleTimes()"> Сокращенный день
+            </label>
+            <label>
+                <input type="checkbox" id="important-day-checkbox" onclick="updateScheduleTimes()"> Важный день
+            </label>
+
+            <label for="schedule-date">Выбрать дату:</label>
+            <input type="date" id="schedule-date" onchange="updateScheduleDate()" />
+
+        
+            <div class="schedule-table">
+                <!-- 1 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-0">08:00 - 08:40</div>
+                    <input type="text" name="monday" id="modifiable-lesson-0" class="modifiable-lesson" placeholder="1 урок или КЛАССНЫЙ ЧАС!!!">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 2 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-1">08:50 - 09:30</div>
+                    <input type="text" name="tuesday" id="modifiable-lesson-1" class="modifiable-lesson" placeholder="2 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 3 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-2">09:40 - 10:20</div>
+                    <input type="text" name="wednesday" id="modifiable-lesson-2" class="modifiable-lesson" placeholder="3 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 4 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-3">10:30 - 11:10</div>
+                    <input type="text" name="thursday" id="modifiable-lesson-3" class="modifiable-lesson" placeholder="4 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 5 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-4">11:20 - 12:00</div>
+                    <input type="text" name="friday" id="modifiable-lesson-4" class="modifiable-lesson" placeholder="5 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 6 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-5">12:10 - 12:50</div>
+                    <input type="text" name="saturday" id="modifiable-lesson-5" class="modifiable-lesson" placeholder="6 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 7 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-6">13:00 - 13:40</div>
+                    <input type="text" name="sunday" id="modifiable-lesson-6" class="modifiable-lesson" placeholder="7 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 8 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-7">13:50 - 14:30</div>
+                    <input type="text" name="seven" id="modifiable-lesson-7" class="modifiable-lesson" placeholder="8 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+            </div>
+        
+                              
+            <button type="button" onclick="sendSchedule()">Отправить в Telegram</button>
+            <a href="/menu">Назад</a>
+        </div>
+        
+             
+
+    <script>
+        // Время для стандартного дня
+    const standardTimes = [
+        { start: "08:00", end: "08:40" },
+        { start: "08:50", end: "09:30" },
+        { start: "09:40", end: "10:20" },
+        { start: "10:30", end: "11:10" },
+        { start: "11:20", end: "12:00" },
+        { start: "12:10", end: "12:50" },
+        { start: "13:00", end: "13:40" },
+        { start: "13:50", end: "14:30" },
+    ];
+
+    // Время для сокращенного дня
+    const shortenedTimes = [
+        { start: "08:00", end: "08:30" },
+        { start: "08:40", end: "09:10" },
+        { start: "09:20", end: "09:50" },
+        { start: "10:00", end: "10:30" },
+        { start: "10:40", end: "11:10" },
+        { start: "11:20", end: "11:50" },
+        { start: "12:00", end: "12:30" },
+        { start: "12:40", end: "13:10" },
+    ];
+
+   
+         const importantTimes = [
+        { start: "08:00", end: "08:20", lesson: "Классный час" }, // Классный час
+        { start: "08:25", end: "09:05" }, // 1 урок (измененное время)
+        { start: "09:15", end: "09:55" }, // 2 урок (измененное время)
+        { start: "10:05", end: "10:45" },
+        { start: "10:55", end: "11:35" },
+        { start: "11:45", end: "12:25" },
+        { start: "12:35", end: "13:15" },
+        { start: "13:20", end: "14:00" }, 
+        
+    ];
+
+    function updateScheduleTimes() {
+        const isShortened = document.getElementById("shortened-day-checkbox").checked;
+        const isImportant = document.getElementById("important-day-checkbox").checked;
+        let times = standardTimes;
+
+        if (isShortened) {
+            times = shortenedTimes;
+        } else if (isImportant) {
+            times = importantTimes;
+        }
+
+        times.forEach((time, index) => {
+            const timeElement = document.getElementById(`time-lesson-${index}`);
+            if (time.lesson) { // Учитываем название урока для Важного дня
+                timeElement.textContent = `${time.start} - ${time.end} (${time.lesson})`;
+            } else {
+                timeElement.textContent = `${time.start} - ${time.end}`;
+            }
+        });
+    }
+        // Определение текущего дня и подсветка соответствующего столбца
+        function highlightCurrentDay() {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','sunday', 'seven'];
+            const currentDay = new Date().getDay();
+            const dayName = days[currentDay];
+            
+            document.querySelectorAll(`input[name="${dayName}"]`).forEach(input => {
+                input.parentElement.classList.add('current-day');
+            });
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = 
+                new Date().toLocaleDateString('ru-RU', options);
+        }
+
+       // Функция копирования расписания
+        function copySchedule() {
+            const sourceDay = document.getElementById('template-day').value;
+            const sourceInputs = document.querySelectorAll(`input[name="${sourceDay}"]`);
+            const values = Array.from(sourceInputs).map(input => input.value);
+
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','sunday', 'seven'];
+            const currentDay = days[new Date().getDay()];
+
+            values.forEach((value, index) => {
+                const modifiableInput = document.getElementById(`modifiable-lesson-${index}`);
+                modifiableInput.value = value || '';
+            });
+            // Это важно: обновляем данные формы после копирования
+            updateFormData();
+        }
+
+        //Вспомогательная функция для       обновления данных формы. Вызывайте её после изменений в форме.
+        function updateFormData(){      
+            const scheduleForm = document.getElementById('schedule-form');
+            // Очищаем данные формы (важно)
+            Array.from(scheduleForm.elements).forEach(element => {
+                if(element.name){
+                    element.value = element.value; //эта строка избыточна, но включена в качестве меры предосторожности
+            }
+            });
+
+        }
+
+
+        // Автоматическое сохранение расписания (Эта функция остаётся без изменений)
+        function saveSchedule() {       
+            const formData = new FormData(document.getElementById('schedule-form'));
+            fetch('/save_schedule', {
+            method: 'POST',
+            body: formData
+             });
+        }
+        function updateScheduleDate() {
+            const dateInput = document.getElementById('schedule-date');
+            const selectedDate = dateInput.value;
+
+            // Здесь сохраните дату в формате, который вам нужен
+            // Например, в формате 'ДД.ММ.ГГГГ'
+            const formattedDate = new Date(selectedDate).toLocaleDateString('ru-RU');
+
+            // Теперь можно использовать formattedDate в вашей функции sendSchedule
+            console.log('Выбранная дата:', formattedDate);
+        }       
+
+        function sendSchedule() {
+            const currentUrl = window.location.href;
+            const urlParts = currentUrl.split('/');
+            const scheduleId = urlParts[urlParts.length - 1];
+
+            if (!scheduleId) {
+                alert("Не удалось определить ID расписания.");
+                return;
+            }
+        
+            const schedule = {
+                lessons: []
+            };
+        
+            // Собираем данные о времени и уроках
+            const scheduleRows = document.querySelectorAll('.schedule-row');
+            scheduleRows.forEach((row, index) => {
+                const timeElement = row.querySelector(`#time-lesson-${index}`);
+                const lessonInput = row.querySelector(`#modifiable-lesson-${index}`);
+
+                if (timeElement && lessonInput) {
+                    schedule.lessons.push({
+                        time: timeElement.textContent,
+                        lesson: lessonInput.value,
+                        lesson_number: index + 1
+                    });
+                }
+            });
+        
+            // Добавляем текущую дату и scheduleId
+            const selectedDate = document.getElementById('schedule-date').value;
+            schedule.date = selectedDate ? new Date(selectedDate).toLocaleDateString('ru-RU') : new Date().toLocaleDateString('ru-RU');
+            schedule.schedule_id = scheduleId;
+        
+            // Отправляем данные на сервер
+            fetch(`/send_schedule/${scheduleId}`, {
+                method: 'POST',
+                body: JSON.stringify({ schedule: schedule }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Расписание успешно отправлено всем пользователям!');
+                } else {
+                    alert('Ошибка при отправке расписания.');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+        }
+
+    </script>
+</body>
+</html>

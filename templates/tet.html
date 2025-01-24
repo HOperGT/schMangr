@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Расписание</title>
+<style>
+body {
+    font-family: sans-serif;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+
+<h1>Расписание</h1>
+
+<label for="datepicker">Выберите дату:</label>
+<input type="date" id="datepicker" value="2025-01-23">
+
+<br><br>
+
+<input type="checkbox" id="monday" value="monday">
+<label for="monday">Понедельник</label>
+<input type="checkbox" id="shortenedDay" value="shortenedDay">
+<label for="shortenedDay">Сокращенный день</label>
+<input type="checkbox" id="regularDay" value="regularDay">
+<label for="regularDay">Обычно</label>
+
+<br><br>
+
+<table>
+    <tr>
+        <th>Время</th>
+        <th>Пн</th>
+        <th>Вт</th>
+        <th>Ср</th>
+        <th>Чт</th>
+        <th>Пт</th>
+        <th>Сб</th>
+        <th>Вс</th>
+    </tr>
+    <tr>
+        <td><span id="time-0">8:00</span></td>
+        <td><input type="text" id="mon-0"></td>
+        <td><input type="text" id="tue-0"></td>
+        <td><input type="text" id="wed-0"></td>
+        <td><input type="text" id="thu-0"></td>
+        <td><input type="text" id="fri-0"></td>
+        <td><input type="text" id="sat-0"></td>
+        <td><input type="text" id="sun-0"></td>
+    </tr>
+    <tr>
+        <td><span id="time-1">9:00</span></td>
+        <td><input type="text" id="mon-1"></td>
+        <td><input type="text" id="tue-1"></td>
+        <td><input type="text" id="wed-1"></td>
+        <td><input type="text" id="thu-1"></td>
+        <td><input type="text" id="fri-1"></td>
+        <td><input type="text" id="sat-1"></td>
+        <td><input type="text" id="sun-1"></td>
+    </tr>
+    <!--  Добавьте больше строк, если нужно -->
+</table>
+
+<script>
+const datePicker = document.getElementById('datepicker');
+const mondayCheckbox = document.getElementById('monday');
+const shortenedDayCheckbox = document.getElementById('shortenedDay');
+const regularDayCheckbox = document.getElementById('regularDay');
+const timeSpans = document.querySelectorAll('span[id^="time-"]');
+
+
+function updateTimes() {
+    let dayType = 'regularDay';
+    if (mondayCheckbox.checked) dayType = 'monday';
+    if (shortenedDayCheckbox.checked) dayType = 'shortenedDay';
+
+    timeSpans.forEach((timeSpan, index) => {
+        let time;
+        switch (dayType) {
+            case 'monday':
+                time = `10:${index * 1 + 0}0`;
+                break;
+            case 'shortenedDay':
+                time = `14:${index * 1 + 0}0`;
+                break;
+            default:
+                time = `${index * 1 + 8}:00`;
+        }
+        timeSpan.textContent = time;
+    });
+}
+
+
+datePicker.addEventListener('change', updateTimes);
+mondayCheckbox.addEventListener('change', updateTimes);
+shortenedDayCheckbox.addEventListener('change', updateTimes);
+regularDayCheckbox.addEventListener('change', updateTimes);
+
+
+updateTimes(); // Инициализация при загрузке страницы
+
+</script>
+
+</body>
+</html>
+
+
+<script>
+    // Определение текущего дня и подсветка соответствующего столбца
+    function highlightCurrentDay() {
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','sunday', 'seven'];
+        const currentDay = new Date().getDay();
+        const dayName = days[currentDay];
+        
+        document.querySelectorAll(`input[name="${dayName}"]`).forEach(input => {
+            input.parentElement.classList.add('current-day');
+        });
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = 
+            new Date().toLocaleDateString('ru-RU', options);
+    }
+
+   // Функция копирования расписания
+    function copySchedule() {
+        const sourceDay = document.getElementById('template-day').value;
+        const sourceInputs = document.querySelectorAll(`input[name="${sourceDay}"]`);
+        const values = Array.from(sourceInputs).map(input => input.value);
+
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','sunday', 'seven'];
+        const currentDay = days[new Date().getDay()];
+
+        values.forEach((value, index) => {
+            const modifiableInput = document.getElementById(`modifiable-lesson-${index}`);
+            modifiableInput.value = value || '';
+        });
+        // Это важно: обновляем данные формы после копирования
+        updateFormData();
+    }
+
+    //Вспомогательная функция для       обновления данных формы. Вызывайте её после изменений в форме.
+    function updateFormData(){      
+        const scheduleForm = document.getElementById('schedule-form');
+        // Очищаем данные формы (важно)
+        Array.from(scheduleForm.elements).forEach(element => {
+            if(element.name){
+                element.value = element.value; //эта строка избыточна, но включена в качестве меры предосторожности
+        }
+        });
+
+    }
+
+
+    // Автоматическое сохранение расписания (Эта функция остаётся без изменений)
+    function saveSchedule() {       
+        const formData = new FormData(document.getElementById('schedule-form'));
+        fetch('/save_schedule', {
+        method: 'POST',
+        body: formData
+         });
+    }
+
+    function sendSchedule() {
+        const currentUrl = window.location.href;
+        const urlParts = currentUrl.split('/');
+        const scheduleId = urlParts[urlParts.length - 1]; // Извлекаем последний элемент URL
+
+        if (!scheduleId) {
+            alert("Не удалось определить ID расписания.");
+            return; // Прекращаем выполнение, если ID не найден
+        }
+
+        const formData = new FormData(document.getElementById('schedule-form'));
+        const schedule = {};
+
+        // Заполняем объект schedule данными из формы
+        for (let [key, value] of formData.entries()) {
+            schedule[key] = value;
+        }
+
+        // Добавляем текущую дату и scheduleId
+        schedule.date = new Date().toLocaleDateString('ru-RU');
+        schedule.schedule_id = scheduleId; // Добавляем schedule_id в объект schedule
+
+        // Отправляем данные на сервер
+        fetch(`/send_schedule/${scheduleId}`, {
+            method: 'POST',
+             body: JSON.stringify({ schedule: schedule }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+        if (data.success) {
+            alert('Расписание успешно отправлено всем пользователям!');
+        } else {
+        alert('Ошибка при отправке расписания.');
+        }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+        });
+    }
+
+        // Вызываем функцию при загрузке страницы
+    window.onload = highlightCurrentDay;
+</script>

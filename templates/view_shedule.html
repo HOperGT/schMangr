@@ -1,0 +1,184 @@
+<!-- <!DOCTYPE html>
+<html>
+
+<head>
+    <title>Просмотр расписание</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: center;
+            background-color: #ffffff;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 20px auto;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <h1>Просмотр расписание для {{ class_schedule.class_name }}</h1>
+    <form method="POST">
+        <table>
+            <tr>
+                <th>Пн</th>
+                <th>Вт</th>
+                <th>Ср</th>
+                <th>Чт</th>
+                <th>Пт</th>
+                <th>Сб</th>
+                <th>Вс</th>
+            </tr>
+            {% for i in range(8) %}
+            <tr>
+                <td>{{ class_schedule.monday.split(',')[i] if i < class_schedule.monday.split(',')|length else '' }}</td>
+
+                <td>{{ class_schedule.tuesday.split(',')[i] if i < class_schedule.tuesday.split(',')|length else '' }}</td>
+                
+                <td>{{ class_schedule.wednesday.split(',')[i] if i < class_schedule.wednesday.split(',')|length else '' }}</td>
+                
+                <td>{{ class_schedule.thursday.split(',')[i] if i < class_schedule.thursday.split(',')|length else '' }}</td>
+                
+                <td>{{ class_schedule.friday.split(',')[i] if i < class_schedule.friday.split(',')|length else '' }}</td>
+                
+                <td>{{ class_schedule.saturday.split(',')[i] if i < class_schedule.saturday.split(',')|length else '' }}</td>
+                
+                <td>{{ class_schedule.sunday.split(',')[i] if i < class_schedule.sunday.split(',')|length else '' }}</td>
+                
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+    <a href="/menuSt">Назад</a>
+</body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Страница в разработке</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    .container {
+      text-align: center;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 1em;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 2em;
+    }
+
+    img {
+      max-width: 200px;
+      margin-bottom: 2em;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://placehold.co/200x100" alt="Логотип компании">
+    <h1>Страница находится в разработке</h1>
+    <p>Мы сейчас работаем над улучшением этой страницы.  Проверьте позже!</p>
+    <p>Для вопросов, пожалуйста, свяжитесь с нами по адресу <a href="https://t.me//NewsSchoolManager">NewsSchoolManager</a></p>
+  </div>
+</body>
+</html>

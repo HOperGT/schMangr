@@ -1,0 +1,11 @@
+meta:
+  environment: python
+  toolchain:
+    name: pip
+    version: 3.12.8
+build:
+  requirementsPath: requirements.txt
+run:
+  scriptName: startapp.py
+  persistenceMount: /instance
+  containerPort: 8080

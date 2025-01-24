@@ -1,0 +1,134 @@
+<!-- <!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Классы</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #495057;
+            margin-top: 30px;
+        }
+
+        .class-box {
+            border: 1px solid #ced4da;
+            padding: 15px;
+            margin: 10px;
+            display: inline-block;
+            width: 220px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .class-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>School №60</h1>
+    
+    <h1>Просмотр раписания</h1>
+    
+    <h2>Список классов:</h2>
+    {% for class in classes %}
+        <div class="class-box">
+            <h3>{{ class.class_name }}</h3>
+            <a href="{{ url_for('view_schedule', id=class.id) }}">Просмотреть расписание</a>
+        </div>
+    {% endfor %}
+</body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Страница в разработке</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    .container {
+      text-align: center;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 1em;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 2em;
+    }
+
+    img {
+      max-width: 200px;
+      margin-bottom: 2em;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://placehold.co/200x100" alt="Логотип компании">
+    <h1>Страница находится в разработке</h1>
+    <p>Мы сейчас работаем над улучшением этой страницы.  Проверьте позже!</p>
+    <p>Для вопросов, пожалуйста, свяжитесь с нами по адресу <a href="https://t.me//NewsSchoolManager">NewsSchoolManager</a></p>
+  </div>
+</body>
+</html>
