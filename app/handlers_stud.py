@@ -26,9 +26,9 @@ router_stud = Router()
 @router_stud.message(Command("view_class"))
 async def start_command(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
-    await message.reply(f"Просмотр расписания класса..\nПерейдите на оффициальное веб-приложение бота.", reply_markup= kb.class_menu())
-    text_to_copy = f'Введите номер при входе`\n {user_id}`'
-    await message.answer(text_to_copy, parse_mode=ParseMode.MARKDOWN_V2)
-    await message.answer(f"Нажмите на номер для копирования.")
+    await message.reply(f"Данная функция отключена!")
+    # text_to_copy = f'Введите номер при входе`\n {user_id}`'
+    # await message.answer(text_to_copy, parse_mode=ParseMode.MARKDOWN_V2)
+    # await message.answer(f"Нажмите на номер для копирования.")
     
          

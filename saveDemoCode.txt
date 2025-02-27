@@ -1,0 +1,246 @@
+<body>
+    <h1>Добавить расписание для {{ class_schedule.class_name }}</h1>
+
+    <h1>Добавить расписание для {{ class_schedule.class_name }}</h1>
+    <div class="action-buttons">
+        <select id="template-day">
+            <option value="monday">Понедельник</option>
+            <option value="tuesday">Вторник</option>
+            <option value="wednesday">Среда</option>
+            <option value="thursday">Четверг</option>
+            <option value="friday">Пятница</option>
+            <option value="saturday">Суббота</option>
+            <option value="sunday">Воскресенье</option>
+        </select>
+        <button type="button" onclick="copySchedule()">Копировать расписание</button>
+        <span id="current-date" style="margin-left: 20px;"></span>
+    </div>
+
+    <form method="POST" id="schedule-form">
+        <input type="hidden" name="class_id" value="{{ class_schedule.id }}">
+        <table>
+            <div class="schedule-table">
+            <table>
+            <tr>
+                <th>Урок</th>
+                <th>Пн</th>
+                <th>Вт</th>
+                <th>Ср</th>
+                <th>Чт</th>
+                <th>Пт</th>
+                <th>Сб</th>
+                <th>Вс</th>
+            </tr>
+            {% for i in range(1, 9) %}
+            <tr>
+                <td>{{ i }}</td> 
+                {% for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] %}
+                <td>
+                <input type="text" name="{{ day }}"                        
+                       value="{{ class_schedule[day].split(',')[i-1] if i-1 < class_schedule[day].split(',')|length else '' }}" 
+                       placeholder="{{ i }} урок" 
+                       onchange="saveSchedule()">
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+        </div>
+        
+        <!-- Особое расписание -->
+    <div id="special-schedule" class="tab-content">
+        <div class="day-controls">
+            <label>
+                <input type="checkbox" id="shortened-day-checkbox" onclick="updateScheduleTimes()"> Сокращенный день
+            </label>
+            <label>
+                <input type="checkbox" id="important-day-checkbox" onclick="updateScheduleTimes()"> Важный день
+            </label>
+
+            <label for="schedule-date">Выбрать дату:</label>
+            <input type="date" id="schedule-date" onchange="updateScheduleDate()" />
+
+        </div>
+        
+        <div class="schedule-table">
+                <!-- 1 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-0">08:00 - 08:40</div>
+                    <input type="text" name="monday" id="modifiable-lesson-0" class="modifiable-lesson" placeholder="1 урок или КЛАССНЫЙ ЧАС!!!">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 2 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-1">08:50 - 09:30</div>
+                    <input type="text" name="tuesday" id="modifiable-lesson-1" class="modifiable-lesson" placeholder="2 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 3 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-2">09:40 - 10:20</div>
+                    <input type="text" name="wednesday" id="modifiable-lesson-2" class="modifiable-lesson" placeholder="3 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 4 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-3">10:30 - 11:10</div>
+                    <input type="text" name="thursday" id="modifiable-lesson-3" class="modifiable-lesson" placeholder="4 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 5 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-4">11:20 - 12:00</div>
+                    <input type="text" name="friday" id="modifiable-lesson-4" class="modifiable-lesson" placeholder="5 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 6 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-5">12:10 - 12:50</div>
+                    <input type="text" name="saturday" id="modifiable-lesson-5" class="modifiable-lesson" placeholder="6 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 7 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-6">13:00 - 13:40</div>
+                    <input type="text" name="sunday" id="modifiable-lesson-6" class="modifiable-lesson" placeholder="7 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+                <!-- 8 урок -->
+                <div class="schedule-row">
+                    <div class="time-column" id="time-lesson-7">13:50 - 14:30</div>
+                    <input type="text" name="seven" id="modifiable-lesson-7" class="modifiable-lesson" placeholder="8 урок">
+                    <select class="classroom-select">
+                        <option value="">Выберите кабинет</option>
+                        <option value="спортзал1">Спортзал 1</option>
+                        <option value="спортзал2">Спортзал 2</option>
+                        <!-- Кабинеты от 100 до 330 -->
+                        <script>
+                            for (let i = 100; i <= 330; i++) {
+                                document.write(`<option value="${i}">Кабинет ${i}</option>`);
+                            }
+                        </script>
+                    </select>
+            
+                </div>
+            </div>
+    </div>
+
+    
+    <div id="settings" class="tab-content">
+        <label>
+            <input type="checkbox" id="shortened-day-checkbox"> Сокращенный день
+        </label>
+        <label>
+            <input type="checkbox" id="important-day-checkbox"> Важный день
+        </label>
+        
+        <label>Выбрать дату:</label>
+        <input type="date" id="schedule-date">
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-btn" onclick="sendSchedule()">Отправить</button>
+        <a href="/menu" class="action-btn">Назад</a>
+    </div>
+
+    <script>
+        //  вкладки
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            const tabLinks = document.getElementsByClassName("tab-link");
+            
+            for (let tab of tabContents) tab.style.display = "none";
+            for (let link of tabLinks) link.classList.remove("active");
+            
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+
+        //  выпадающ списк
+        function initSelects() {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                });
+            });
+        }
+        initSelects();
+    </script>

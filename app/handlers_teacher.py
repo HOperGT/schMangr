@@ -34,9 +34,9 @@ async def add_command(message: types.Message, state: FSMContext):
     conn.close()
     if user and user[0] == "teacher" and user[1] == 1:  
         await message.reply(f"Добавление класса и/или добавление расписания.\nПерейдите на оффициальное веб-приложение бота.", reply_markup= kb.class_menu())
-        text_to_copy = f'Введите номер при входе`\n {user_id}`'
-        await message.answer(text_to_copy, parse_mode=ParseMode.MARKDOWN_V2)
-        await message.answer(f"Нажмите на номер для копирования.")
+        # text_to_copy = f'Введите номер при входе`\n {user_id}`'
+        # await message.answer(text_to_copy, parse_mode=ParseMode.MARKDOWN_V2)
+        # await message.answer(f"Нажмите на номер для копирования.")
     else:
         await message.reply(f"Только учителя могут управлять классами!")    
 
@@ -72,43 +72,76 @@ async def all_send(callback: types.CallbackQuery, state: FSMContext):
 
 @router_tech.message(SendMesEvent.all_waiting_for_mess)
 async def check_all_mess(message: types.Message, state: FSMContext):
-    message_txt = message.text
-    
-    if not message_txt:
-        await message.reply("Пожалуйста, укажите текст сообщения.")
-        return
-       
-    if message_txt == '/notSend':
-        await message.answer(f"Отмена операции отправки сообщения!")
+    # Проверка команды отмены
+    if message.text and message.text.strip() == '/notSend':
+        await message.answer("Отмена операции отправки сообщения!")
         await state.clear()
         return
 
-    conn = sqlite3.connect("users.db", isolation_level=None)
+    # Определение типа контента
+    content_type = None
+    file_id = None
+    caption = None
+    text = None
+
+    if message.text:
+        content_type = 'text'
+        text = message.text
+    elif message.photo:
+        content_type = 'photo'
+        file_id = message.photo[-1].file_id
+        caption = message.caption
+    elif message.video:
+        content_type = 'video'
+        file_id = message.video.file_id
+        caption = message.caption
+    elif message.voice:
+        content_type = 'voice'
+        file_id = message.voice.file_id
+    elif message.animation:
+        content_type = 'animation'
+        file_id = message.animation.file_id
+        caption = message.caption
+    else:
+        await message.reply("❌ Неподдерживаемый тип сообщения. Используйте текст, фото, видео, голосовое или GIF.")
+        return
+
+    # Получение списка пользователей
+    conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
     cursor.execute("SELECT user_id FROM users")
     users = cursor.fetchall()
+    conn.close()
 
     if not users:
-        await message.reply("Нет зарегистрированных пользователей.")
+        await message.reply("🚫 Нет зарегистрированных пользователей.")
         return
 
+    # Отправка контента
     sent_count = 0
     failed_count = 0
     
-    # Отправка сообщения всем пользователям
     for user in users:
         user_id = str(user[0])
         try:
-            # await bot.send_message(chat_id=user_id, text=message_dataee)
-            await bot.send_message(chat_id=user_id, text=message_txt)  # Изменения тут
+            if content_type == 'text':
+                await bot.send_message(chat_id=user_id, text=text)
+            elif content_type == 'photo':
+                await bot.send_photo(chat_id=user_id, photo=file_id, caption=caption)
+            elif content_type == 'video':
+                await bot.send_video(chat_id=user_id, video=file_id, caption=caption)
+            elif content_type == 'voice':
+                await bot.send_voice(chat_id=user_id, voice=file_id)
+            elif content_type == 'animation':
+                await bot.send_animation(chat_id=user_id, animation=file_id, caption=caption)
             sent_count += 1
         except Exception as e:
-            print(f"Не удалось отправить сообщение пользователю {user_id}: {e}")
+            print(f"Ошибка отправки: {e}")
             failed_count += 1
 
-    # Подтверждение отправки
-    await message.reply(f"Сообщение было отправлено {sent_count} пользователям, не удалось отправить {failed_count}.")
+    await message.reply(f"✅ Отправлено: {sent_count}\n❌ Не удалось: {failed_count}")
     await state.clear()
+
 
 @router_tech.callback_query(lambda f: f.data == "send_choose")
 async def choose_send(callback: types.CallbackQuery, state: FSMContext):
@@ -143,85 +176,76 @@ async def send_cshoose_mess(callback: types.CallbackQuery, state: FSMContext):
 
 @router_tech.message(SendMesEvent.waiting_for_mess)
 async def check_mess(message: types.Message, state: FSMContext):
-    # Получаем данные состояния, ожидая ответ асинхронной функции
-    data = await state.get_data()
-    class_id = data.get('class_id')  # Извлекаем class_id из данных состояния
-
-    message_txt = message.text
-
-    if not message_txt:
-        await message.reply("Пожалуйста, укажите текст сообщения.")
-        return
-
-    if message_txt == '/notSend':
+    # Проверка команды отмены
+    if message.text and message.text.strip() == '/notSend':
         await message.answer("Отмена операции отправки сообщения!")
         await state.clear()
         return
 
-    conn = sqlite3.connect("users.db", isolation_level=None)
+    # Определение типа контента
+    content_type = None
+    file_id = None
+    caption = None
+    text = None
+
+    if message.text:
+        content_type = 'text'
+        text = message.text
+    elif message.photo:
+        content_type = 'photo'
+        file_id = message.photo[-1].file_id
+        caption = message.caption
+    elif message.video:
+        content_type = 'video'
+        file_id = message.video.file_id
+        caption = message.caption
+    elif message.voice:
+        content_type = 'voice'
+        file_id = message.voice.file_id
+    elif message.animation:
+        content_type = 'animation'
+        file_id = message.animation.file_id
+        caption = message.caption
+    else:
+        await message.reply("❌ Неподдерживаемый тип сообщения. Используйте текст, фото, видео, голосовое или GIF.")
+        return
+
+    # Получение данных класса
+    data = await state.get_data()
+    class_id = data.get('class_id')
+
+    # Получение пользователей класса
+    conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
-
-    # Обратите внимание, что class_id теперь корректно передан
     cursor.execute("SELECT user_id FROM users WHERE class_id = ?", (class_id,))
-    class_users = cursor.fetchall()  # Получаем всех пользователей с классом class_id
-
+    class_users = cursor.fetchall()
     conn.close()
 
     if not class_users:
-        await message.reply("Нет зарегистрированных пользователей.")
+        await message.reply("🚫 В этом классе нет пользователей.")
         return
 
+    # Отправка контента
     sent_count = 0
     failed_count = 0
 
-    # Отправка сообщения всем пользователям
     for user in class_users:
         user_id = str(user[0])
         try:
-            await bot.send_message(chat_id=user_id, text=message_txt)
+            if content_type == 'text':
+                await bot.send_message(chat_id=user_id, text=text)
+            elif content_type == 'photo':
+                await bot.send_photo(chat_id=user_id, photo=file_id, caption=caption)
+            elif content_type == 'video':
+                await bot.send_video(chat_id=user_id, video=file_id, caption=caption)
+            elif content_type == 'voice':
+                await bot.send_voice(chat_id=user_id, voice=file_id)
+            elif content_type == 'animation':
+                await bot.send_animation(chat_id=user_id, animation=file_id, caption=caption)
             sent_count += 1
         except Exception as e:
-            print(f"Не удалось отправить сообщение пользователю {user_id}: {e}")
+            print(f"Ошибка отправки: {e}")
             failed_count += 1
 
-    # Подтверждение отправки
-    await message.reply(f"Сообщение было отправлено {sent_count} пользователям, не удалось отправить {failed_count}.")
+    await message.reply(f"✅ Отправлено: {sent_count}\n❌ Не удалось: {failed_count}")
     await state.clear()
-
-
-
-
-
-
-
-
-    # # Получаем текст сообщения после команды
-    # message_text = message.text.replace('/admin_message', '').strip()
-
-    # if not message_text:
-    #     await message.reply("Пожалуйста, укажите текст сообщения после команды.")
-    #     return
-
-    # # Получение всех user_id из базы данных
-    # cursor.execute("SELECT user_id FROM users")
-    # users = cursor.fetchall()
-
-    # if not users:
-    #     await message.reply("Нет зарегистрированных пользователей.")
-    #     return
-
-    # sent_count = 0
-    # failed_count = 0
-
-    # # Отправка сообщения всем пользователям
-    # for user in users:
-    #     user_id = str(user[0])
-    #     try:
-    #         await bot.send_message(chat_id=user_id, text=message_text)  # Изменения тут
-    #         sent_count += 1
-    #     except Exception as e:
-    #         print(f"Не удалось отправить сообщение пользователю {user_id}: {e}")
-    #         failed_count += 1
-
-    # # Подтверждение отправки
-    # await message.reply(f"Сообщение было отправлено {sent_count} пользователям, не удалось отправить {failed_count}.")

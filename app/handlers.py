@@ -1,7 +1,9 @@
 import asyncio
 import sqlite3
 import app.keyboards as kb
+import os
 
+from werkzeug.security import generate_password_hash, check_password_hash
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters import Command
@@ -44,7 +46,7 @@ def generate_commands_message():
 def get_commands_message():
     commands_description = {
         "/start": "▶️ Запустить бота и начать работу.",
-        "/help": "ℹ️ Получить список всех доступных команд.",
+        "/help": "ℹ️ Получить dox file с доп. информацией.",
         "/add_class": "📚 Добавить новый класс.",
         "/admin_message": "🛠️ Отправить сообщение от администратора. OnlyAdmin",
         "/info": "📖 Узнать информацию о боте.",
@@ -114,7 +116,6 @@ async def check_teacher_login(message: types.Message, state: FSMContext):
     await state.set_state(UserStates.ActiveState)
     user_id = message.from_user.id
 
-    # Проверяем, не является ли сообщение командой отмены
     if message.text == "/notEnter":
         await message.answer("❌ Регистрация отменена.", reply_markup=kb.role_selection_menu())
         await state.clear()
@@ -122,28 +123,51 @@ async def check_teacher_login(message: types.Message, state: FSMContext):
         return
 
     try:
-        valid_login = "teacher"
-        valid_password = "password"
+        # Получаем логин и пароль из сообщения
+        login, password = message.text.split(maxsplit=1)
+        
+        # Подключаемся к базе данных с учетными данными
+        db_path = os.path.join('instance', 'site.db')
+        conn_auth = sqlite3.connect(db_path)
+        cursor_auth = conn_auth.cursor()
+        
+        # Ищем пользователя в базе
+        cursor_auth.execute("SELECT password FROM user WHERE username = ?", (login,))
+        auth_data = cursor_auth.fetchone()
+        conn_auth.close()
 
-        login, password = message.text.split()
+        if not auth_data:
+            await message.answer("❌ Пользователь не найден", reply_markup=kb.role_selection_menu())
+            return
 
-        if login == valid_login and password == valid_password:
-            conn = sqlite3.connect("users.db", isolation_level=None)
-            cursor = conn.cursor()
-            cursor.execute("INSERT OR REPLACE INTO users (user_id, role, is_authenticated) VALUES (?, ?, ?)",
-                         (user_id, "teacher", 1))
-            conn.commit()
-            conn.close()
+        # Проверяем пароль
+        if check_password_hash(auth_data[0], password):
+            # Подключаемся к основной базе пользователей
+            conn_users = sqlite3.connect("users.db", isolation_level=None)
+            cursor_users = conn_users.cursor()
+            
+            # Обновляем статус пользователя
+            cursor_users.execute(
+                "INSERT OR REPLACE INTO users (user_id, role, is_authenticated) VALUES (?, ?, ?)",
+                (user_id, "teacher", 1)
+            )
+            conn_users.commit()
+            conn_users.close()
 
             await message.answer("🎉 Вы успешно авторизованы как учитель!")
             response_message = get_commands_message()
             await message.answer(response_message)
-            await state.clear()
-            await state.set_state(UserStates.DefaultState)
         else:
-            await message.answer("❌ Неверный логин или пароль. Попробуйте еще раз.", reply_markup=kb.role_selection_menu())
+            await message.answer("❌ Неверный логин или пароль", reply_markup=kb.role_selection_menu())
+
     except ValueError:
-        await message.answer("⚠️ Введите данные в формате: логин пароль.", reply_markup=kb.role_selection_menu())
+        await message.answer("⚠️ Введите данные в формате: логин пароль", reply_markup=kb.role_selection_menu())
+    except Exception as e:
+        print(f"Ошибка авторизации: {e}")
+        await message.answer("⚠️ Произошла ошибка авторизации", reply_markup=kb.role_selection_menu())
+    finally:
+        await state.clear()
+        await state.set_state(UserStates.DefaultState)
 
 @router.callback_query(lambda c: c.data == "role_student")
 async def role_student(callback: types.CallbackQuery):

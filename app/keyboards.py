@@ -37,7 +37,7 @@ def back_3() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     # Подключаемся к classes.db и извлекаем названия классов
-    conn_classes = sqlite3.connect("instance/classes.db", isolation_level=None)
+    conn_classes = sqlite3.connect("instance/site.db", isolation_level=None)
     cursor_classes = conn_classes.cursor()
     cursor_classes.execute("SELECT id, class_name FROM class_schedule")
     class_buttons = cursor_classes.fetchall()
@@ -74,7 +74,7 @@ def generate_class_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     # Подключаемся к classes.db и извлекаем названия классов
-    conn_classes = sqlite3.connect("instance/classes.db", isolation_level=None)
+    conn_classes = sqlite3.connect("instance/site.db", isolation_level=None)
     cursor_classes = conn_classes.cursor()
     cursor_classes.execute("SELECT id, class_name FROM class_schedule")
     class_buttons = cursor_classes.fetchall()
@@ -99,7 +99,7 @@ def generate_sendmessclass() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     # Подключаемся к classes.db и извлекаем названия классов
-    conn_classes = sqlite3.connect("instance/classes.db", isolation_level=None)
+    conn_classes = sqlite3.connect("instance/site.db", isolation_level=None)
     cursor_classes = conn_classes.cursor()
     cursor_classes.execute("SELECT id, class_name FROM class_schedule")
     class_buttons = cursor_classes.fetchall()
