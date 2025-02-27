@@ -24,17 +24,16 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 stats = {
     "start_time": datetime.datetime.now(),
-    "inline_queries": 0,  # здесь будет количество инлайн запросов
-    # добавьте другие статистические данные по необходимости
+    "inline_queries": 0,  
 }
 
 @dp.message(Command('stats'))
 async def stats_command(message: types.Message):
-    # Вычисляем время с последнего запуска
+    
     uptime = datetime.datetime.now() - stats["start_time"]
     stats_report = (
         f"⏳ Время работы бота: {uptime}\n"
-        # добавьте другие параметры статистики
+        
     )
     await message.answer(stats_report)
 
@@ -44,7 +43,7 @@ async def init_db():
     conn = sqlite3.connect("users.db", isolation_level=None)
     cursor = conn.cursor()
 
-    # Создание таблицы с новым столбцом button_id
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER PRIMARY KEY,
@@ -92,8 +91,8 @@ class TeacherLogin(StatesGroup):
 
 # async def send_data_to_website():
 #     try:
-#             url = "https://webappsch-hoper.amvera.io/upload"  # URL сайта, принимающего данные
-#          # Загрузка локального JSON файла
+#             url = "https://webappsch-hoper.amvera.io/upload"  
+#          
 #             with open('uploaded_data.json', 'rb') as file:
 #                 files = {'file': file}
 #                 response = requests.post(url, files=files)
