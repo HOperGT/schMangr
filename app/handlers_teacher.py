@@ -72,13 +72,12 @@ async def all_send(callback: types.CallbackQuery, state: FSMContext):
 
 @router_tech.message(SendMesEvent.all_waiting_for_mess)
 async def check_all_mess(message: types.Message, state: FSMContext):
-    # Проверка команды отмены
     if message.text and message.text.strip() == '/notSend':
         await message.answer("Отмена операции отправки сообщения!")
         await state.clear()
         return
 
-    # Определение типа контента
+    
     content_type = None
     file_id = None
     caption = None
@@ -106,7 +105,7 @@ async def check_all_mess(message: types.Message, state: FSMContext):
         await message.reply("❌ Неподдерживаемый тип сообщения. Используйте текст, фото, видео, голосовое или GIF.")
         return
 
-    # Получение списка пользователей
+    
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
     cursor.execute("SELECT user_id FROM users")
@@ -117,7 +116,7 @@ async def check_all_mess(message: types.Message, state: FSMContext):
         await message.reply("🚫 Нет зарегистрированных пользователей.")
         return
 
-    # Отправка контента
+    
     sent_count = 0
     failed_count = 0
     
@@ -163,26 +162,26 @@ async def choose_send(callback: types.CallbackQuery, state: FSMContext):
 async def send_cshoose_mess(callback: types.CallbackQuery, state: FSMContext):
     user_id = callback.from_user.id
 
-    # Извлекаем class_id из callback.data
+    
     class_id = callback.data.split('view_')[1]
 
-    # Устанавливаем class_id в состояние
+    
     await state.update_data(class_id=class_id)
 
-    # Устанавливаем состояние ожидания сообщения
+    
     await state.set_state(SendMesEvent.waiting_for_mess)
 
     await callback.message.answer(f"Напишите текст для отправки, для отмены введите /notSend")
 
 @router_tech.message(SendMesEvent.waiting_for_mess)
 async def check_mess(message: types.Message, state: FSMContext):
-    # Проверка команды отмены
+    
     if message.text and message.text.strip() == '/notSend':
         await message.answer("Отмена операции отправки сообщения!")
         await state.clear()
         return
 
-    # Определение типа контента
+    
     content_type = None
     file_id = None
     caption = None
@@ -210,11 +209,11 @@ async def check_mess(message: types.Message, state: FSMContext):
         await message.reply("❌ Неподдерживаемый тип сообщения. Используйте текст, фото, видео, голосовое или GIF.")
         return
 
-    # Получение данных класса
+    
     data = await state.get_data()
     class_id = data.get('class_id')
 
-    # Получение пользователей класса
+    
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
     cursor.execute("SELECT user_id FROM users WHERE class_id = ?", (class_id,))
@@ -225,7 +224,7 @@ async def check_mess(message: types.Message, state: FSMContext):
         await message.reply("🚫 В этом классе нет пользователей.")
         return
 
-    # Отправка контента
+    
     sent_count = 0
     failed_count = 0
 

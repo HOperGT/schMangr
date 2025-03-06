@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Добавить расписание</title>
     <style>
-        /* Основные стили */
+        
         body {
             font-family: 'Roboto', sans-serif;
             background: #f0f2f5;
@@ -18,7 +18,7 @@
             margin: 20px 0;
         }
 
-        /* Контейнер вкладок */
+        
         .tabs {
             display: flex;
             flex-wrap: wrap;
@@ -41,7 +41,7 @@
             color: white;
         }
 
-        /* Контент вкладок */
+        
         .tab-content {
             display: none;
             background: white;
@@ -54,7 +54,7 @@
             display: block;
         }
 
-        /* Адаптивная таблица */
+        
         .schedule-table {
             width: 100%;
             overflow-x: auto;
@@ -75,7 +75,7 @@
             background: #f5f5f5;
         }
 
-        /* Мобильные стили */
+        
         @media (max-width: 768px) {
             .day-controls {
                 flex-direction: column;
@@ -97,7 +97,7 @@
             }
         }
 
-        /* Стили для выбора кабинета */
+        
         .classroom-select {
             background: #fff;
             border: 1px solid #ddd;
@@ -106,7 +106,7 @@
             width: 150px;
         }
 
-        /* Кнопки действий */
+        
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -202,7 +202,7 @@
             </table>
             </div>
     </div>
-        <!-- Особое расписание -->
+        
     <div id="special-schedule" class="tab-content">
         <div class="day-controls">
             <label>
@@ -420,9 +420,9 @@
 
     
             const importantTimes = [
-            { start: "08:00", end: "08:20", lesson: "Классный час" }, // Классный час
-            { start: "08:25", end: "09:05" }, // 1 урок (измененное время)
-            { start: "09:15", end: "09:55" }, // 2 урок (измененное время)
+            { start: "08:00", end: "08:20", lesson: "Классный час" }, 
+            { start: "08:25", end: "09:05" }, 
+            { start: "09:15", end: "09:55" }, 
             { start: "10:05", end: "10:45" },
             { start: "10:55", end: "11:35" },
             { start: "11:45", end: "12:25" },
@@ -444,14 +444,14 @@
 
             times.forEach((time, index) => {
                 const timeElement = document.getElementById(`time-lesson-${index}`);
-                if (time.lesson) { // Учитываем название урока для Важного дня
+                if (time.lesson) { 
                     timeElement.textContent = `${time.start} - ${time.end} (${time.lesson})`;
                 } else {
                     timeElement.textContent = `${time.start} - ${time.end}`;
                 }
             });
         }
-        // Определение текущего дня и подсветка соответствующего столбца
+        
         function highlightCurrentDay() {
             const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','sunday', 'seven'];
             const currentDay = new Date().getDay();
@@ -479,24 +479,24 @@
                 const modifiableInput = document.getElementById(`modifiable-lesson-${index}`);
                 modifiableInput.value = value || '';
             });
-            // Это важно: обновляем данные формы после копирования
+            
             updateFormData();
         }
 
-        //Вспомогательная функция для       обновления данных формы. Вызывайте её после изменений в форме.
+        
         function updateFormData(){      
             const scheduleForm = document.getElementById('schedule-form');
-            // Очищаем данные формы (важно)
+            
             Array.from(scheduleForm.elements).forEach(element => {
                 if(element.name){
-                    element.value = element.value; //эта строка избыточна, но включена в качестве меры предосторожности
+                    element.value = element.value; 
             }
             });
 
         }
 
 
-        // Автоматическое сохранение расписания (Эта функция остаётся без изменений)
+        
         function saveSchedule() {       
             const formData = new FormData(document.getElementById('schedule-form'));
             fetch('/save_schedule', {
@@ -508,11 +508,10 @@
             const dateInput = document.getElementById('schedule-date');
             const selectedDate = dateInput.value;
 
-            // Здесь сохраните дату в формате, который вам нужен
-            // Например, в формате 'ДД.ММ.ГГГГ'
+            
             const formattedDate = new Date(selectedDate).toLocaleDateString('ru-RU');
 
-            // Теперь можно использовать formattedDate в вашей функции sendSchedule
+            
             console.log('Выбранная дата:', formattedDate);
         }       
 
@@ -530,28 +529,28 @@
                 lessons: []
             };
         
-            // / Собираем данные о времени, уроках и кабинетах
+            
             const scheduleRows = document.querySelectorAll('.schedule-row');
             scheduleRows.forEach((row, index) => {
                 const timeElement = row.querySelector(`#time-lesson-${index}`);
                 const lessonInput = row.querySelector(`#modifiable-lesson-${index}`);
-                const classroomSelect = row.querySelector('.classroom-select'); // Добавляем выбор кабинета
+                const classroomSelect = row.querySelector('.classroom-select'); 
                 if (timeElement && lessonInput && classroomSelect) {
                     schedule.lessons.push({
                         time: timeElement.textContent,
                         lesson: lessonInput.value,
-                        classroom: classroomSelect.value, // Добавляем значение кабинета
+                        classroom: classroomSelect.value, 
                         lesson_number: index + 1
                     });
                 }
             });
         
-            // Добавляем текущую дату и scheduleId
+           
             const selectedDate = document.getElementById('schedule-date').value;
             schedule.date = selectedDate ? new Date(selectedDate).toLocaleDateString('ru-RU') : new Date().toLocaleDateString('ru-RU');
             schedule.schedule_id = scheduleId;
         
-            // Отправляем данные на сервер
+           
             fetch(`/send_schedule/${scheduleId}`, {
                 method: 'POST',
                 body: JSON.stringify({ schedule: schedule }),

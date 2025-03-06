@@ -76,14 +76,14 @@ class TeacherLogin(StatesGroup):
 #     conn = sqlite3.connect('users.db')
 #     cursor = conn.cursor()
     
-#     # Изменяем SQL запрос, чтобы получить и user_id, и role
+#     
 #     cursor.execute('SELECT user_id, role FROM users')
 #     rows = cursor.fetchall()
 
-#     # Конвертация данных в список словарей с id и role
+#     
 #     data = [{"id": row[0], "role": row[1]} for row in rows]
 
-#     # Сохранение данных в JSON-файл
+#     
 #     with open('uploaded_data.json', 'w') as json_file:
 #         json.dump(data, json_file, indent=4)
 

@@ -32,10 +32,10 @@ def generate_commands_message():
         "OwnerCmd": ["/helpp", "/TS"]
     }
 
-    # Начальная строка списка команд
+    
     mmessage = "Список доступных команд:\n"
 
-    # Перебор групп и их команд
+    
     for group_name, commands in commands_by_group.items():
         mmessage += f"\n**{group_name}:**\n"
         for command in commands:
@@ -57,7 +57,7 @@ def get_commands_message():
         "/view_class" : "📚 Просмотр расписания."
     }
 
-    # Формируем текст сообщения
+    
     response_message = "💡 *Доступные команды:*\n\n" + "\n".join([f"{cmd} – {desc}" for cmd, desc in commands_description.items()])
 
     return response_message
@@ -123,15 +123,15 @@ async def check_teacher_login(message: types.Message, state: FSMContext):
         return
 
     try:
-        # Получаем логин и пароль из сообщения
+        
         login, password = message.text.split(maxsplit=1)
         
-        # Подключаемся к базе данных с учетными данными
+        
         db_path = os.path.join('instance', 'site.db')
         conn_auth = sqlite3.connect(db_path)
         cursor_auth = conn_auth.cursor()
         
-        # Ищем пользователя в базе
+        
         cursor_auth.execute("SELECT password FROM user WHERE username = ?", (login,))
         auth_data = cursor_auth.fetchone()
         conn_auth.close()
@@ -140,13 +140,13 @@ async def check_teacher_login(message: types.Message, state: FSMContext):
             await message.answer("❌ Пользователь не найден", reply_markup=kb.role_selection_menu())
             return
 
-        # Проверяем пароль
+        
         if check_password_hash(auth_data[0], password):
-            # Подключаемся к основной базе пользователей
+            
             conn_users = sqlite3.connect("users.db", isolation_level=None)
             cursor_users = conn_users.cursor()
             
-            # Обновляем статус пользователя
+            
             cursor_users.execute(
                 "INSERT OR REPLACE INTO users (user_id, role, is_authenticated) VALUES (?, ?, ?)",
                 (user_id, "teacher", 1)
@@ -180,11 +180,11 @@ async def role_student(callback: types.CallbackQuery):
     conn.close()
     
     if (
-        user  # проверяем, что запись существует
-        and user[0]  # проверяем, что role существует и не пустой
-        and user[1] == 1  # проверяем, что is_authenticated равен 1
-        and user[2] is not None  # проверяем, что class_id не NULL
-        and user[0] == "student"  # проверяем, что role равен "student"
+        user  
+        and user[0]  
+        and user[1] == 1  
+        and user[2] is not None  
+        and user[0] == "student"  
     ):
         response_message = get_commands_message()
         await callback.message.answer(response_message)
@@ -217,7 +217,7 @@ async def select_class(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     class_id = callback.data.split("_")[2]
 
-    # Update the user's class_id in users.db
+    
     conn = sqlite3.connect("users.db", isolation_level=None)
     cursor = conn.cursor()
     cursor.execute(

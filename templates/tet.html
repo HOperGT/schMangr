@@ -69,7 +69,7 @@ th {
         <td><input type="text" id="sat-1"></td>
         <td><input type="text" id="sun-1"></td>
     </tr>
-    <!--  Добавьте больше строк, если нужно -->
+    
 </table>
 
 <script>
@@ -108,7 +108,7 @@ shortenedDayCheckbox.addEventListener('change', updateTimes);
 regularDayCheckbox.addEventListener('change', updateTimes);
 
 
-updateTimes(); // Инициализация при загрузке страницы
+updateTimes(); 
 
 </script>
 
@@ -117,7 +117,7 @@ updateTimes(); // Инициализация при загрузке стран�
 
 
 <script>
-    // Определение текущего дня и подсветка соответствующего столбца
+    
     function highlightCurrentDay() {
         const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','sunday', 'seven'];
         const currentDay = new Date().getDay();
@@ -132,7 +132,7 @@ updateTimes(); // Инициализация при загрузке стран�
             new Date().toLocaleDateString('ru-RU', options);
     }
 
-   // Функция копирования расписания
+   
     function copySchedule() {
         const sourceDay = document.getElementById('template-day').value;
         const sourceInputs = document.querySelectorAll(`input[name="${sourceDay}"]`);
@@ -145,24 +145,24 @@ updateTimes(); // Инициализация при загрузке стран�
             const modifiableInput = document.getElementById(`modifiable-lesson-${index}`);
             modifiableInput.value = value || '';
         });
-        // Это важно: обновляем данные формы после копирования
+        
         updateFormData();
     }
 
-    //Вспомогательная функция для       обновления данных формы. Вызывайте её после изменений в форме.
+    
     function updateFormData(){      
         const scheduleForm = document.getElementById('schedule-form');
-        // Очищаем данные формы (важно)
+        
         Array.from(scheduleForm.elements).forEach(element => {
             if(element.name){
-                element.value = element.value; //эта строка избыточна, но включена в качестве меры предосторожности
+                element.value = element.value; 
         }
         });
 
     }
 
 
-    // Автоматическое сохранение расписания (Эта функция остаётся без изменений)
+    
     function saveSchedule() {       
         const formData = new FormData(document.getElementById('schedule-form'));
         fetch('/save_schedule', {
@@ -174,26 +174,26 @@ updateTimes(); // Инициализация при загрузке стран�
     function sendSchedule() {
         const currentUrl = window.location.href;
         const urlParts = currentUrl.split('/');
-        const scheduleId = urlParts[urlParts.length - 1]; // Извлекаем последний элемент URL
+        const scheduleId = urlParts[urlParts.length - 1]; 
 
         if (!scheduleId) {
             alert("Не удалось определить ID расписания.");
-            return; // Прекращаем выполнение, если ID не найден
+            return; 
         }
 
         const formData = new FormData(document.getElementById('schedule-form'));
         const schedule = {};
 
-        // Заполняем объект schedule данными из формы
+        
         for (let [key, value] of formData.entries()) {
             schedule[key] = value;
         }
 
-        // Добавляем текущую дату и scheduleId
+        
         schedule.date = new Date().toLocaleDateString('ru-RU');
-        schedule.schedule_id = scheduleId; // Добавляем schedule_id в объект schedule
+        schedule.schedule_id = scheduleId; 
 
-        // Отправляем данные на сервер
+       
         fetch(`/send_schedule/${scheduleId}`, {
             method: 'POST',
              body: JSON.stringify({ schedule: schedule }),
@@ -214,6 +214,6 @@ updateTimes(); // Инициализация при загрузке стран�
         });
     }
 
-        // Вызываем функцию при загрузке страницы
+        
     window.onload = highlightCurrentDay;
 </script>

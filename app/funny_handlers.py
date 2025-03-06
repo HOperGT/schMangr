@@ -19,8 +19,8 @@ router_funny = Router()
 
 
 class UserStates(StatesGroup):
-    DefaultState = State()  # Состояние по умолчанию (пользователь ничего не делает)
-    ActiveState = State()  # Например, пользователь в процессе заполнения формы
+    DefaultState = State()  
+    ActiveState = State()  
 
 
 

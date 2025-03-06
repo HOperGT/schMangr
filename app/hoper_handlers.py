@@ -29,19 +29,19 @@ async def admin_message_handler(message: types.Message):
     """
     Обработка команды /admin_message. Отправляет указанное сообщение всем пользователям.
     """
-    # Проверка, является ли пользователь администратором
-    if message.from_user.id != 1441658354:  # Замените на ваш ID администратора
+    
+    if message.from_user.id != 1441658354:  
         await message.reply("У вас нет прав для отправки сообщений!")
         return
 
-    # Получаем текст сообщения после команды
+    
     message_text = message.text.replace('/admin_message', '').strip()
 
     if not message_text:
         await message.reply("Пожалуйста, укажите текст сообщения после команды.")
         return
 
-    # Получение всех user_id из базы данных
+    
     cursor.execute("SELECT user_id FROM users")
     users = cursor.fetchall()
 
@@ -52,42 +52,42 @@ async def admin_message_handler(message: types.Message):
     sent_count = 0
     failed_count = 0
 
-    # Отправка сообщения всем пользователям
+    
     for user in users:
         user_id = str(user[0])
         try:
-            await bot.send_message(chat_id=user_id, text=message_text)  # Изменения тут
+            await bot.send_message(chat_id=user_id, text=message_text)  
             sent_count += 1
         except Exception as e:
             print(f"Не удалось отправить сообщение пользователю {user_id}: {e}")
             failed_count += 1
 
-    # Подтверждение отправки
+    
     await message.reply(f"Сообщение было отправлено {sent_count} пользователям, не удалось отправить {failed_count}.")
 
 
 @routerHP.message(Command('TS'))
 async def check_roles(message: types.Message):
 
-    if message.from_user.id != 1441658354:  # Замените на ваш ID администратора
+    if message.from_user.id != 1441658354:  
         await message.reply("У вас нет прав для отправки сообщений!")
         return
-    # Подключение к базе данных
+    
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
 
-    # Запрос для получения количества учителей
+    
     cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'teacher'")
     teacher_count = cursor.fetchone()[0]
 
-    # Запрос для получения количества студентов
+    
     cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'student'")
     student_count = cursor.fetchone()[0]
 
-    # Закрытие соединения
+    
     conn.close()
 
-    # Формирование и отправка сообщения
+    
     await message.reply(f"Количество учителей: {teacher_count}\nКоличество студентов: {student_count}")
 
 

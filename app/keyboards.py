@@ -33,29 +33,29 @@ def back_role_2() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 def back_3() -> InlineKeyboardMarkup:
-    # Создаем объект InlineKeyboardBuilder
+    
     builder = InlineKeyboardBuilder()
 
-    # Подключаемся к classes.db и извлекаем названия классов
+    
     conn_classes = sqlite3.connect("instance/site.db", isolation_level=None)
     cursor_classes = conn_classes.cursor()
     cursor_classes.execute("SELECT id, class_name FROM class_schedule")
     class_buttons = cursor_classes.fetchall()
     conn_classes.close()
 
-    # Добавляем кнопки классов
+    
     for class_id, class_name in class_buttons:
         builder.button(
-            text=class_name,  # Название кнопки
-            callback_data=f"select_class_{class_name}"  # Данные колбэка
+            text=class_name,  
+            callback_data=f"select_class_{class_name}"  
         )
 
-    # Дополнительные кнопки для управления меню
+    
     builder.button(text="🔙 Вернуться", callback_data="exit_to_role")
     builder.add(InlineKeyboardButton(text="Не менять класс.", callback_data="role_student"))
-    builder.adjust(1)  # Настраиваем клавиатуру, чтобы кнопки располагались по одной в строке
+    builder.adjust(1)  
 
-    return builder.as_markup()  # Возвращаем готовую маркировку клавиатуры
+    return builder.as_markup()  
 
 
 def student_menu() -> InlineKeyboardMarkup:
@@ -70,63 +70,63 @@ def student_menu() -> InlineKeyboardMarkup:
 
 
 def generate_class_menu() -> InlineKeyboardMarkup:
-    # Создаем объект InlineKeyboardBuilder
+    
     builder = InlineKeyboardBuilder()
 
-    # Подключаемся к classes.db и извлекаем названия классов
+    
     conn_classes = sqlite3.connect("instance/site.db", isolation_level=None)
     cursor_classes = conn_classes.cursor()
     cursor_classes.execute("SELECT id, class_name FROM class_schedule")
     class_buttons = cursor_classes.fetchall()
     conn_classes.close()
 
-    # Добавляем кнопки классов
+    
     for class_id, class_name in class_buttons:
         builder.button(
-            text=class_name,  # Название кнопки
-            callback_data=f"select_class_{class_name}"  # Данные колбэка
+            text=class_name,  
+            callback_data=f"select_class_{class_name}"  
         )
 
-    # Дополнительные кнопки для управления меню
+    
     builder.button(text="🔙 Вернуться", callback_data="exit_to_role")
 
-    builder.adjust(1)  # Настраиваем клавиатуру, чтобы кнопки располагались по одной в строке
+    builder.adjust(1) 
 
-    return builder.as_markup()  # Возвращаем готовую маркировку клавиатуры
+    return builder.as_markup() 
 
 def generate_sendmessclass() -> InlineKeyboardMarkup:
-    # Создаем объект InlineKeyboardBuilder
+    
     builder = InlineKeyboardBuilder()
 
-    # Подключаемся к classes.db и извлекаем названия классов
+    
     conn_classes = sqlite3.connect("instance/site.db", isolation_level=None)
     cursor_classes = conn_classes.cursor()
     cursor_classes.execute("SELECT id, class_name FROM class_schedule")
     class_buttons = cursor_classes.fetchall()
     conn_classes.close()
 
-    # Добавляем кнопки классов
+    
     for class_id, class_name in class_buttons:
         builder.button(
-            text=class_name,  # Название кнопки
-            callback_data=f"view_{class_name}"  # Данные колбэка
+            text=class_name,  
+            callback_data=f"view_{class_name}"  
         )
 
-    # Дополнительные кнопки для управления меню
+    
     builder.button(text="🔙 Вернуться", callback_data="exit_to_role")
 
-    builder.adjust(1)  # Настраиваем клавиатуру, чтобы кнопки располагались по одной в строке
+    builder.adjust(1)  
 
-    return builder.as_markup()  # Возвращаем готовую маркировку клавиатуры
+    return builder.as_markup()  
 
 
 
 
 def class_menu():
-    # Создание объекта WebAppInfo
+    
     web_app_info = WebAppInfo(url='https://webappsch-hoper.amvera.io/')
 
-    # Создание клавиатуры
+    
     builder = ReplyKeyboardBuilder()
     builder.add(KeyboardButton(text="Открыть веб-приложение", web_app=web_app_info))
     return builder.as_markup(resize_keyboard=True)

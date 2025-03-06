@@ -27,9 +27,9 @@ class FileUploadState(StatesGroup):
 
 @router_help.message(Command("help"))
 async def help_command(message: types.Message):
-    file_path = 'data/helping.docx'  # Укажите путь к вашему файлу
+    file_path = 'data/helping.docx'  
     if os.path.exists(file_path):
-        document = FSInputFile(file_path)  # Используем FSInputFile для указания локального файла
+        document = FSInputFile(file_path)  
         await message.answer_document(document)
     else:
         await message.answer("Файл помощи не найден.")
@@ -37,7 +37,7 @@ async def help_command(message: types.Message):
 
 @router_help.message(Command("helpp"))
 async def helpp_command(message: types.Message, state: FSMContext):
-    if message.from_user.id == OWNER_TELEGRAM_ID:  # Проверяем, является ли отправитель администратором
+    if message.from_user.id == OWNER_TELEGRAM_ID:  
         await message.answer("Отправьте файл Word (в формате .docx), который нужно загрузить в систему.\n\nДля отмены введите /notSend")
         await state.set_state(FileUploadState.waiting_for_file)
     else:
@@ -54,13 +54,13 @@ async def document_handler(message: types.Message, state: FSMContext):
             return  
         
         document = message.document
-        if document.file_name.endswith('.docx'):  # Проверяем, является ли файл форматом .docx
-            file_path = 'data/helping.docx'  # Указываем, что файл будет сохранен как helping.docx
-            file = await bot.get_file(document.file_id)  # Скачиваем файл
+        if document.file_name.endswith('.docx'):  
+            file_path = 'data/helping.docx'  
+            file = await bot.get_file(document.file_id)  
             with open(file_path, 'wb') as f:
-                await bot.download_file(file.file_path, file_path) # Сохраняем файл в систему
+                await bot.download_file(file.file_path, file_path) 
             await message.answer("Файл успешно загружен в систему и сохранен как data/helping.docx")
-            await state.clear() # Завершаем состояние
+            await state.clear() 
         else:
             await message.answer("Пожалуйста, загрузите файл в формате .docx")
     else:

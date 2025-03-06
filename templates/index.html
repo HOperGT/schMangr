@@ -15,25 +15,25 @@
     <style>
       body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #E0EAFC 0%, #CFDEF3 100%); /* Градиентный фон */
+            background: linear-gradient(135deg, #E0EAFC 0%, #CFDEF3 100%); 
             color: #333;
             line-height: 1.6;
             margin: 20px;
             display: flex;
-            flex-direction: column; /* Элементы располагаются сверху вниз */
-            align-items: center; /* Выравнивание по центру по горизонтали */
+            flex-direction: column; 
+            align-items: center; 
         }
 
         .main-content {
-            width: 95%; /* Увеличиваем ширину на мобильных */
+            width: 95%; 
             max-width: 800px;
-            margin: 10px auto; /* Уменьшаем отступы */
-            padding: 0 10px; /* Добавляем боковые отступы */
+            margin: 10px auto; 
+            padding: 0 10px; 
         }
 
         h1 {
-            font-size: 1.8rem; /* Уменьшаем размер заголовков */
-            text-align: center; /* Центрируем текст */
+            font-size: 1.8rem; 
+            text-align: center; 
         }
 
         .buttons-container {
@@ -42,7 +42,7 @@
             gap: 1rem;
         }
 
-        /* Медиа-запрос для мобильных устройств */
+        
         @media (max-width: 768px) {
             .main-content {
                 width: 100%;
@@ -55,17 +55,17 @@
             }
 
             .class-box {
-                width: 100%; /* Занимает всю ширину */
+                width: 100%; 
                 margin: 5px 0;
             }
 
             #delete-class-form {
-                flex-direction: column; /* Элементы формы в столбик */
+                flex-direction: column; 
             }
 
             #delete-class-form input[type="text"] {
                 width: 100%;
-                margin: 0 0 10px 0; /* Отступ снизу */
+                margin: 0 0 10px 0; 
             }
 
             #delete-class-form button {
@@ -80,7 +80,7 @@
             }
 
             .class-list {
-                grid-template-columns: 1fr; /* Одна колонка */
+                grid-template-columns: 1fr; 
             }
 
             .container.mt-5 {
@@ -94,7 +94,7 @@
             }
         }
 
-        /* Для очень маленьких экранов */
+        
         @media (max-width: 480px) {
             body {
                 margin: 10px;
@@ -121,18 +121,18 @@
             background-color: #4CAF50;
         }
 
-        /* ... (предыдущие стили) ... */
+        
 
         #delete-class-form {
-            display: flex; /* Используем flexbox */
-            align-items: center; /* Выравниваем элементы по вертикали */
+            display: flex; 
+            align-items: center; 
             margin-top: 20px;
         }
 
         #delete-class-form input[type="text"] {
-            flex: 1; /* input занимает доступное пространство */
+            flex: 1; 
             padding: 8px;
-            margin-right: 10px; /* Отступ между input и кнопкой */
+            margin-right: 10px; 
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
@@ -140,7 +140,7 @@
 
         #delete-class-form button {
             padding: 8px 15px;
-            background-color: #f44336; /* Красный цвет */
+            background-color: #f44336; 
             color: white;
             border: none;
             border-radius: 4px;
@@ -151,18 +151,18 @@
         .classes-container {
             display: flex;
             flex-direction: column;
-            align-items: center; /* Выравнивание списка классов по центру */
+            align-items: center; 
         }
 
         .class-list {
             display: flex;
-            flex-wrap: wrap; /* Разрешаем перенос на новую строку */
-            justify-content: center; /* Выравнивание блоков по центру */
+            flex-wrap: wrap; 
+            justify-content: center; 
         }
 
         .add-class-button {
             background: linear-gradient(45deg, #4158D0 0%, #C850C0 50%, #FFCC70 100%);
-            color: white; /* Цвет текста белый для лучшей читаемости */
+            color: white; 
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -177,7 +177,7 @@
             transition: all 0.3s ease;
         }
 
-        /* Стили для кнопки "Удалить класс" */
+        
         #delete-class-form button {
             background: linear-gradient(45deg, #4158D0 0%, #C850C0 50%, #FFCC70 100%);
             color: white;
@@ -196,19 +196,19 @@
             margin: 10px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            width: 300px; /* Фиксированная ширина */
-            transition: transform 0.3s ease-in-out; /* Анимация трансформации */
-            animation: classAppear 0.5s ease-in-out forwards; /* Анимация появления */
+            width: 300px; 
+            transition: transform 0.3s ease-in-out; 
+            animation: classAppear 0.5s ease-in-out forwards; 
         }
 
         .class-box:hover {
-            transform: scale(1.05); /* Увеличение при наведении */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Сильнее тень */
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         @keyframes classAppear {
-            from { opacity: 0; transform: translateY(20px); } /* Начальное положение */
-            to { opacity: 1; transform: translateY(0); } /* Конечное положение */
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
         }
        
         .classes-container {
@@ -300,7 +300,7 @@
         <a href="{{ url_for('logout') }}" class="btn btn-danger mb-4">Выйти</a>
     </div>    
     <h1>School №60</h1>
-    <div class="main-content">  <!-- Новый контейнер -->
+    <div class="main-content">  
         <div class="buttons-container">
             <h1>Регистрация классов</h1>
             <a href="/register" class="add-class-button">Добавить класс</a>
