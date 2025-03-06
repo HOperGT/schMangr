@@ -80,7 +80,8 @@ serve(app, host='0.0.0.0', port=8080, threads=4)
 app.run(host='0.0.0.0', port=5000)
 #serve(app, host='0.0.0.0', port=8080, threads=4)
 
-
+config ОБЯЗАТЕЛЬНО ПОСМОТРЕТЬ! TOKEN взять у FUTHER BOT TELEGRAMM или могу свой давть от бота
+OWNER_ID_TELEGRAM это просто айди главного админа, можеет свой ввести 
 ## Запуск проекта  
 Установите зависимости
 pip install -r requirements.txt
